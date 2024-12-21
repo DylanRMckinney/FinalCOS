@@ -72,7 +72,7 @@ void saveGame(ROOM** rooms, int currentRow, int currentCol, int score, const cha
 
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
-            fprintf(file, "%c", rooms[i][j].roomContents);
+            fprintf(file, "%c", rooms[i][j].name);
         }
         fprintf(file, "\n");
     }
@@ -94,7 +94,7 @@ void loadGame(ROOM** rooms, int* currentRow, int* currentCol, int* score, const 
 
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
-            fscanf(file, "%c", &rooms[i][j].roomContents);
+            fscanf(file, "%c", &rooms[i][j].name);
         }
         fgetc(file); // Take out that newline
     }
