@@ -58,6 +58,52 @@ void move(int* row, int* col, char direction) {
     }
 }
 
+
+// Function to save the game state
+void saveGame(ROOM** rooms, int currentRow, int currentCol, int score, const char* filename) {
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        fprintf(stderr, "Error: Could not open file for saving.\n");
+        return;
+    }
+
+    fprintf(file, "%d\n", score);
+    fprintf(file, "%d %d\n", currentRow, currentCol);
+
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            fprintf(file, "%c", rooms[i][j].roomContents);
+        }
+        fprintf(file, "\n");
+    }
+
+    fclose(file);
+    printf("Game saved to %s!\n", filename);
+}
+
+// Load game!
+void loadGame(ROOM** rooms, int* currentRow, int* currentCol, int* score, const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        fprintf(stderr, "Error: Could not open file for loading.\n");
+        return;
+    }
+
+    fscanf(file, "%d\n", score);
+    fscanf(file, "%d %d\n", currentRow, currentCol);
+
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            fscanf(file, "%c", &rooms[i][j].roomContents);
+        }
+        fgetc(file); // Take out that newline
+    }
+
+    fclose(file);
+    printf("Game loaded from %s!\n", filename);
+}
+
+
 int main() {
     
 
@@ -89,7 +135,7 @@ int main() {
         printf("Score: %d\n", score);
         
 
-        printf("\nEnter command (e.g., 'move n'): ");
+        printf("\nEnter command (move n/e/w/s, save, or load): ");
         scanf("%s", command);
 
         if (strcmp(command, "move") == 0) {
@@ -101,7 +147,11 @@ int main() {
                     rooms[currentRow][currentCol].roomContents = ' '; // Remove pickup
                     score++;
                     totalPickups--;
-             }
+            }
+        } else if (strcmp(command, "save") == 0) {
+            saveGame(rooms, currentRow, currentCol, score, "savegame.txt");
+        } else if (strcmp(command, "load") == 0) {
+            loadGame(rooms, &currentRow, &currentCol, &score, "savegame.txt");
         } else {
             printf("Invalid command!\n");
         }
@@ -114,7 +164,8 @@ int main() {
         free(rooms[i]);
     }
     free(rooms);
-    }
-
+    
+    
     return 0;
+    }
 }
